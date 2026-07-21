@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHT Badminton Club - Đăng Ký Áo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Luckiest+Guy&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0d0d0d;
+    --white:#f5f5f0;
+    --green:#2e7d50;
+    --green-dark:#1f5c3b;
+    --gold:#d9b44a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Be Vietnam Pro', sans-serif;
+    min-height:100vh;
+  }
+  .banner{
+    position:relative;
+    background:var(--black);
+    padding:28px 16px 20px;
+    text-align:center;
+    border-bottom:4px solid var(--green);
+    cursor:pointer;
+    user-select:none;
+  }
+  .banner:active{ opacity:0.85; }
+  .banner-logo{
+    font-family:'Luckiest Guy', cursive;
+    font-size:clamp(28px,7vw,46px);
+    color:var(--white);
+    letter-spacing:1px;
+    -webkit-text-stroke:1.5px var(--green);
+    line-height:1;
+  }
+  .banner-sub{
+    font-size:13px;
+    color:var(--green);
+    font-weight:600;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-top:4px;
+  }
+  .banner-hint{
+    font-size:11px;
+    color:#666;
+    margin-top:10px;
+  }
+  .gallery{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding:16px;
+    background:#151515;
+    border-bottom:1px solid #262626;
+  }
+  .gallery img{
+    height:200px;
+    border-radius:10px;
+    flex-shrink:0;
+    box-shadow:0 4px 14px rgba(0,0,0,0.5);
+  }
+  .court-divider{
+    height:14px;
+    background:repeating-linear-gradient(135deg, var(--green) 0 18px, transparent 18px 36px);
+    opacity:0.9;
+  }
+  .wrap{
+    max-width:480px;
+    margin:0 auto;
+    padding:24px 18px 60px;
+  }
+  .card{
+    background:#161616;
+    border:1px solid #272727;
+    border-radius:16px;
+    padding:22px 20px;
+  }
+  .card h2{
+    font-size:19px;
+    margin-bottom:4px;
+  }
+  .card p.desc{
+    font-size:13px;
+    color:#999;
+    margin-bottom:18px;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin:16px 0 6px;
+  }
+  label .req{ color:var(--gold); }
+  input[type=text], textarea{
+    width:100%;
+    background:#0d0d0d;
+    border:1.5px solid #333;
+    color:var(--white);
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:15px;
+    font-family:inherit;
+  }
+  input:focus, textarea:focus{
+    outline:none;
+    border-color:var(--green);
+  }
+  .size-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:6px;
+  }
+  .size-grid button{
+    padding:10px 0;
+    border-radius:8px;
+    border:1.5px solid #333;
+    background:#0d0d0d;
+    color:var(--white);
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .size-grid button.active{
+    background:var(--green);
+    border-color:var(--green);
+  }
+  .size-table-toggle{
+    display:block;
+    text-align:center;
+    font-size:12px;
+    color:var(--green);
+    margin-top:14px;
+    background:none;
+    border:none;
+    width:100%;
+    padding:6px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .size-table-wrap{
+    display:none;
+    overflow-x:auto;
+    margin-top:10px;
+    border:1px solid #272727;
+    border-radius:10px;
+  }
+  .size-table-wrap table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:11px;
+    min-width:520px;
+  }
+  .size-table-wrap th, .size-table-wrap td{
+    border:1px solid #262626;
+    padding:6px 8px;
+    text-align:center;
+    white-space:nowrap;
+  }
+  .size-table-wrap th{ background:#1c1c1c; color:var(--green); }
+  .size-table-wrap td:first-child, .size-table-wrap th:first-child{
+    text-align:left; color:#999; font-weight:600;
+  }
+  .btn-submit{
+    width:100%;
+    margin-top:22px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:var(--green);
+    color:var(--white);
+    font-weight:800;
+    font-size:16px;
+    letter-spacing:0.5px;
+    cursor:pointer;
+  }
+  .btn-submit:disabled{ opacity:0.5; }
+  .msg{
+    margin-top:14px;
+    font-size:13px;
+    text-align:center;
+    min-height:18px;
+  }
+  .msg.ok{ color:var(--green); }
+  .msg.err{ color:#e05c5c; }
+  .note{
+    text-align:center; font-size:11px; color:#555; margin-top:16px;
+  }
+  /* ADMIN */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.75);
+    display:none; align-items:flex-end;
+    z-index:50;
+  }
+  .overlay.show{ display:flex; }
+  .sheet{
+    background:#161616;
+    width:100%;
+    border-radius:20px 20px 0 0;
+    padding:20px 18px 30px;
+    max-height:88vh;
+    overflow-y:auto;
+    position:relative;
+    margin:0 auto;
+    max-width:600px;
+  }
+  .sheet h3{ font-size:17px; margin-bottom:14px; }
+  .pass-box{ text-align:center; padding:20px 0; }
+  .pass-box input{
+    text-align:center;
+    letter-spacing:2px;
+    margin:14px 0;
+  }
+  .pass-box button{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:10px;
+    background:var(--green);
+    color:var(--white);
+    font-weight:800;
+    cursor:pointer;
+  }
+  .stat-row{ display:flex; gap:10px; margin-bottom:16px; }
+  .stat-box{
+    flex:1;
+    background:#0d0d0d;
+    border:1px solid #272727;
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+  }
+  .stat-box b{ font-size:22px; color:var(--green); display:block; }
+  .stat-box span{ font-size:11px; color:#888; }
+  .toolbar{ display:flex; gap:8px; margin-bottom:12px; }
+  .toolbar button{
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#0d0d0d;
+    color:var(--white);
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .toolbar button.excel{ background:var(--green); border-color:var(--green); }
+  #adminTableWrap{ overflow-x:auto; }
+  table.data{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+  }
+  table.data th, table.data td{
+    border-bottom:1px solid #262626;
+    padding:8px 6px;
+    text-align:left;
+    white-space:nowrap;
+  }
+  table.data th{ color:#888; font-weight:600; }
+  .close-x{
+    position:absolute; top:14px; right:16px;
+    color:#888; font-size:22px; background:none; border:none; cursor:pointer;
+  }
+  .loading{ text-align:center; color:#666; font-size:13px; padding:20px; }
+</style>
+</head>
+<body>
+
+  <div class="banner" onclick="openAdmin()">
+    <div class="banner-logo">PHT</div>
+    <div class="banner-sub">Badminton Club · Since 2024</div>
+    <div class="banner-hint">Đăng ký áo nhóm — chạm vào banner để vào trang Admin</div>
+  </div>
+
+  <div class="gallery">
+    <img src="images/ao-truoc.jpg" alt="Mặt trước áo">
+    <img src="images/ao-sau.jpg" alt="Mặt sau áo">
+  </div>
+  <div class="court-divider"></div>
+
+  <div class="wrap">
+    <div class="card">
+      <h2>Đăng ký áo của bạn</h2>
+      <p class="desc">Điền thông tin bên dưới. Nếu đăng ký nhầm, cứ đăng ký lại và ghi rõ ở phần Ghi chú.</p>
+
+      <form id="regForm">
+        <label>Tên <span class="req">*</span></label>
+        <input type="text" id="fTen" placeholder="VD: Nguyễn Quốc Thi" required>
+
+        <label>Tên in trên áo <span class="req">*</span></label>
+        <input type="text" id="fTenAo" placeholder="VD: THI" required>
+
+        <label>Size áo <span class="req">*</span></label>
+        <div class="size-grid" id="sizeGrid">
+          <button type="button" data-size="S">S</button>
+          <button type="button" data-size="M">M</button>
+          <button type="button" data-size="L">L</button>
+          <button type="button" data-size="XL">XL</button>
+          <button type="button" data-size="2XL">2XL</button>
+          <button type="button" data-size="3XL">3XL</button>
+        </div>
+        <button type="button" class="size-table-toggle" onclick="toggleSizeTable()">📏 Xem / ẩn bảng size chi tiết</button>
+        <div class="size-table-wrap" id="sizeTableWrap">
+          <table>
+            <tr><th>Thông số</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>2XL</th><th>3XL</th></tr>
+            <tr><td>Chiều cao (cm)</td><td>155-160</td><td>160-165</td><td>165-172</td><td>172-177</td><td>177-183</td><td>183-189</td></tr>
+            <tr><td>Cân nặng (kg)</td><td>48-55</td><td>55-62</td><td>62-69</td><td>69-76</td><td>76-85</td><td>85-90</td></tr>
+            <tr><td>Dài thân trước</td><td>65</td><td>67</td><td>69</td><td>71</td><td>73</td><td>75</td></tr>
+            <tr><td>1/2 ngang ngực</td><td>47</td><td>49</td><td>51</td><td>53</td><td>55</td><td>57</td></tr>
+            <tr><td>1/2 ngang gấu</td><td>47</td><td>40</td><td>51</td><td>53</td><td>55</td><td>57</td></tr>
+            <tr><td>Dài tay</td><td>34.5</td><td>36</td><td>37</td><td>39</td><td>40.5</td><td>42</td></tr>
+          </table>
+        </div>
+
+        <label>Ghi chú</label>
+        <textarea id="fGhiChu" rows="2" placeholder="VD: đăng ký lại, lý do đổi tên..."></textarea>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">✓ Gửi đăng ký</button>
+        <div class="msg" id="formMsg"></div>
+      </form>
+    </div>
+    <div class="note">PHT Badminton Club © 2026</div>
+  </div>
+
+  <!-- ADMIN OVERLAY -->
+  <div class="overlay" id="adminOverlay">
+    <div class="sheet">
+      <button class="close-x" onclick="closeAdmin()">×</button>
+
+      <div id="passStep" class="pass-box">
+        <h3>🔒 Khu vực Admin</h3>
+        <input type="text" id="passInput" placeholder="Nhập mật khẩu">
+        <button onclick="checkPass()">Xác nhận</button>
+        <div class="msg err" id="passMsg"></div>
+      </div>
+
+      <div id="statStep" style="display:none">
+        <h3>📋 Thống kê đăng ký áo</h3>
+        <div class="stat-row" id="statRow"></div>
+        <div class="toolbar">
+          <button class="excel" onclick="exportExcel()">⬇ Xuất Excel</button>
+          <button onclick="copyForExcel()">📋 Copy để dán Excel</button>
+        </div>
+        <div id="adminTableWrap"><div class="loading">Đang tải dữ liệu...</div></div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, serverTimestamp, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ============================================================
+  // 🔧 DÁN firebaseConfig CỦA BẠN VÀO ĐÂY (lấy từ project cũ)
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "DÁN_API_KEY_CỦA_BẠN",
+    authDomain: "DÁN_AUTH_DOMAIN",
+    projectId: "DÁN_PROJECT_ID",
+    storageBucket: "DÁN_STORAGE_BUCKET",
+    messagingSenderId: "DÁN_SENDER_ID",
+    appId: "DÁN_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const COLLECTION = "dangky_ao";
+  const ADMIN_PASS = "PHTthanglon";
+
+  // -------- FORM ĐĂNG KÝ --------
+  let selectedSize = null;
+  document.getElementById("sizeGrid").addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    document.querySelectorAll("#sizeGrid button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedSize = btn.dataset.size;
+  });
+
+  window.toggleSizeTable = function () {
+    const el = document.getElementById("sizeTableWrap");
+    el.style.display = el.style.display === "block" ? "none" : "block";
+  };
+
+  document.getElementById("regForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const ten = document.getElementById("fTen").value.trim();
+    const tenAo = document.getElementById("fTenAo").value.trim();
+    const ghiChu = document.getElementById("fGhiChu").value.trim();
+    const msg = document.getElementById("formMsg");
+    const btn = document.getElementById("btnSubmit");
+
+    if (!ten || !tenAo || !selectedSize) {
+      msg.textContent = "⚠️ Vui lòng nhập đủ Tên, Tên trên áo và chọn Size.";
+      msg.className = "msg err";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Đang gửi...";
+    try {
+      await addDoc(collection(db, COLLECTION), {
+        ten, tenAo, size: selectedSize, ghiChu,
+        thoiGian: serverTimestamp()
+      });
+      msg.textContent = "✅ Đăng ký thành công! Cảm ơn bạn.";
+      msg.className = "msg ok";
+      document.getElementById("regForm").reset();
+      document.querySelectorAll("#sizeGrid button").forEach(b => b.classList.remove("active"));
+      selectedSize = null;
+    } catch (err) {
+      console.error(err);
+      msg.textContent = "❌ Lỗi gửi đăng ký, thử lại nhé: " + err.message;
+      msg.className = "msg err";
+    }
+    btn.disabled = false;
+    btn.textContent = "✓ Gửi đăng ký";
+  });
+
+  // -------- ADMIN --------
+  window.openAdmin = function () {
+    document.getElementById("adminOverlay").classList.add("show");
+    document.getElementById("passStep").style.display = "block";
+    document.getElementById("statStep").style.display = "none";
+    document.getElementById("passInput").value = "";
+    document.getElementById("passMsg").textContent = "";
+  };
+  window.closeAdmin = function () {
+    document.getElementById("adminOverlay").classList.remove("show");
+  };
+
+  let cachedRows = [];
+
+  window.checkPass = async function () {
+    const val = document.getElementById("passInput").value;
+    if (val !== ADMIN_PASS) {
+      document.getElementById("passMsg").textContent = "Sai mật khẩu, thử lại.";
+      return;
+    }
+    document.getElementById("passStep").style.display = "none";
+    document.getElementById("statStep").style.display = "block";
+    await loadAdminData();
+  };
+
+  async function loadAdminData() {
+    const wrap = document.getElementById("adminTableWrap");
+    wrap.innerHTML = '<div class="loading">Đang tải dữ liệu...</div>';
+    try {
+      const q = query(collection(db, COLLECTION), orderBy("thoiGian", "asc"));
+      const snap = await getDocs(q);
+      cachedRows = [];
+      snap.forEach(doc => {
+        const d = doc.data();
+        cachedRows.push({
+          ten: d.ten || "",
+          tenAo: d.tenAo || "",
+          size: d.size || "",
+          ghiChu: d.ghiChu || "",
+          thoiGian: d.thoiGian && d.thoiGian.toDate ? d.thoiGian.toDate() : null
+        });
+      });
+      renderStats();
+      renderTable();
+    } catch (err) {
+      wrap.innerHTML = '<div class="loading">❌ Lỗi tải dữ liệu: ' + err.message + '</div>';
+    }
+  }
+
+  function renderStats() {
+    const total = cachedRows.length;
+    const count = {};
+    cachedRows.forEach(r => count[r.size] = (count[r.size] || 0) + 1);
+    let topSize = "-", topN = 0;
+    Object.keys(count).forEach(s => { if (count[s] > topN) { topN = count[s]; topSize = s; } });
+    document.getElementById("statRow").innerHTML = `
+      <div class="stat-box"><b>${total}</b><span>Đã đăng ký</span></div>
+      <div class="stat-box"><b>${topSize}</b><span>Size nhiều nhất (${topN})</span></div>
+    `;
+  }
+
+  function fmtDate(d) {
+    if (!d) return "";
+    const p = n => String(n).padStart(2, "0");
+    return `${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  function renderTable() {
+    const wrap = document.getElementById("adminTableWrap");
+    if (cachedRows.length === 0) {
+      wrap.innerHTML = '<div class="loading">Chưa có ai đăng ký.</div>';
+      return;
+    }
+    let html = '<table class="data" id="dataTable"><tr><th>#</th><th>Tên</th><th>Tên trên áo</th><th>Size</th><th>Ghi chú</th><th>Thời gian</th></tr>';
+    cachedRows.forEach((r, i) => {
+      html += `<tr><td>${i+1}</td><td>${escapeHtml(r.ten)}</td><td>${escapeHtml(r.tenAo)}</td><td>${escapeHtml(r.size)}</td><td>${escapeHtml(r.ghiChu)}</td><td>${fmtDate(r.thoiGian)}</td></tr>`;
+    });
+    html += '</table>';
+    wrap.innerHTML = html;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  // -------- COPY ĐỂ DÁN VÀO EXCEL --------
+  window.copyForExcel = function () {
+    if (cachedRows.length === 0) { alert("Chưa có dữ liệu."); return; }
+    const header = ["#", "Tên", "Tên trên áo", "Size", "Ghi chú", "Thời gian"];
+    let tsv = header.join("\t") + "\n";
+    cachedRows.forEach((r, i) => {
+      tsv += [i+1, r.ten, r.tenAo, r.size, r.ghiChu, fmtDate(r.thoiGian)].join("\t") + "\n";
+    });
+    navigator.clipboard.writeText(tsv).then(() => {
+      alert("✅ Đã copy! Mở Excel và dán (Ctrl+V) vào ô A1.");
+    }).catch(() => {
+      alert("Không copy được tự động. Bạn có thể bôi đen bảng và copy thủ công.");
+    });
+  };
+
+  // -------- XUẤT EXCEL (dùng SheetJS) --------
+  window.exportExcel = function () {
+    if (cachedRows.length === 0) { alert("Chưa có dữ liệu."); return; }
+    if (typeof XLSX === "undefined") { alert("Thư viện Excel chưa tải xong, thử lại sau 1-2 giây."); return; }
+    const data = cachedRows.map((r, i) => ({
+      "#": i + 1,
+      "Tên": r.ten,
+      "Tên trên áo": r.tenAo,
+      "Size": r.size,
+      "Ghi chú": r.ghiChu,
+      "Thời gian": fmtDate(r.thoiGian)
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "DangKyAo");
+    const today = new Date();
+    const fname = `DangKyAo_PHT_${today.getFullYear()}${String(today.getMonth()+1).padStart(2,"0")}${String(today.getDate()).padStart(2,"0")}.xlsx`;
+    XLSX.writeFile(wb, fname);
+  };
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+</body>
+</html>
